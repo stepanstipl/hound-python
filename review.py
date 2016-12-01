@@ -24,11 +24,10 @@ class PythonReviewJob(object):
         patch = attributes["patch"]
         pull_request_number = attributes["pull_request_number"]
 
-        linter_config = {}
-        linter_config.update(flake.parse_config(config))
+        results = flake.check(config, content, filename)
         violations = [
-            {'line': error[0], 'message': error[3]}
-            for error in flake.check_code(content, filename, **linter_config)
+            {'line': v.row, 'message': v.text}
+            for v in results
         ]
         payload = {
             'class': 'CompletedFileReviewJob',

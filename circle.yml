@@ -8,4 +8,4 @@ dependencies:
 
 test:
   override:
-    - py.test test_review.py
+    - py.test test_*.py
