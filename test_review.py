@@ -94,3 +94,31 @@ class TestReview:
             }],
         }
         mock_queue.push.assert_called_with('high', payload)
+
+    def test_max_line_length(self, mock_queue):
+        config = '''
+        [flake8]
+        max-line-length=20
+        '''
+        review.PythonReviewJob.perform({
+            'commit_sha': '3e01a4',
+            'config': config,
+            'content': 'print("faaaaaaaaaaaaaaaaaaaaar too long a line")\n',
+            'filename': 'test.py',
+            'patch': 7,
+            'pull_request_number': 3,
+        })
+        violations = [
+            {'line': 1, 'message': "line too long (48 > 20 characters)"},
+        ]
+        payload = {
+            'class': 'CompletedFileReviewJob',
+            'args': [{
+                'filename': 'test.py',
+                'commit_sha': '3e01a4',
+                'pull_request_number': 3,
+                'patch': 7,
+                'violations': violations,
+            }],
+        }
+        mock_queue.push.assert_called_with('high', payload)
