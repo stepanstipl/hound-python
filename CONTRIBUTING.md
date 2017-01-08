@@ -11,7 +11,7 @@ issue trackers, chatrooms, and mailing lists.
 
 ## Developing
 
-Requires Python 3.4.
+Requires Python 3.6.
 
 Run `bin/setup` to get dependencies.
 
