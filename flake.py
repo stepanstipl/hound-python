@@ -5,7 +5,8 @@ import os
 import subprocess
 from collections import namedtuple
 from contextlib import contextmanager
-from tempfile import TemporaryDirectory, mkstemp
+from tempfile import mkdtemp, mkstemp
+from shutil import rmtree
 
 FLAKE8_REPORT_FORMAT = r'%(path)s:%(row)d:%(col)d:%(code)s:%(text)s'
 
@@ -14,6 +15,14 @@ Environ = namedtuple('Environ', ['config_filename', 'filename'])
 # A review violation
 Violation = namedtuple('Violation', ['path', 'row', 'col', 'code', 'text'])
 
+class TemporaryDirectory(object):
+    """Context manager for tempfile.mkdtemp() so it's usable with "with" statement."""
+    def __enter__(self):
+        self.name = mkdtemp()
+        return self.name
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        rmtree(self.name)
 
 def check(config, content, filename):
     """
