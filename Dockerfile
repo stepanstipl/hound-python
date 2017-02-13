@@ -5,13 +5,18 @@ ENV REDIS_URL=redis://redis:6379
 
 COPY . /hound-python
 
-RUN apk add --update \
+RUN apk add --update --virtual build-deps \
            build-base \
+           python-dev \
            python3-dev \
+    && apk add \
            python3 \
+           python \
+           py2-pip \
            su-exec \
     && cd hound-python \
     && pip3 install -U -r requirements.txt \
+    && pip install -U -r requirements.txt \
     && rm -rf /var/cache/apk/* \
     && adduser -S -D -H hound
 
